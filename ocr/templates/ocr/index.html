@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Главная - Документы для анализа</title>
+    <style>
+        .gallery { display: flex; flex-wrap: wrap; gap: 20px; }
+        .doc-item { width: 30%; margin-bottom: 20px; text-align: center; }
+        img { max-width: 100%; max-height: 200px; display: block; margin: 0 auto; }
+        .actions { margin-bottom: 24px; }
+        .actions button { margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div class="actions">
+        <button onclick="location.href='/analyze/'">Проанализировать картинку</button>
+        <button onclick="location.href='/add/'">Добавить картинку</button>
+        <button onclick="location.href='/logout/'">Выйти</button>
+    </div>
+    <div class="gallery">
+        {% for doc in docs %}
+        <div class="doc-item">
+            <div>ID: {{ doc.id }}</div>
+            <img src="{{ doc.file_path }}" alt="Документ {{ doc.id }}">
+            <form action="/order/{{ doc.id }}/" method="get" style="margin-top:10px;">
+                <button type="submit">Заказать анализ</button>
+            </form>
+            <form action="/pay/{{ doc.cart_set.last.id }}/" method="get" style="margin-top:10px;">
+                {% if doc.cart_set.last and not doc.cart_set.last.payment and doc.cart_set.last.user == request.user %}
+                <button type="submit">Оплатить заказ</button>
+                {% endif %}
+            </form>
+        </div>
+        {% empty %}
+        <p>Документов нет.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

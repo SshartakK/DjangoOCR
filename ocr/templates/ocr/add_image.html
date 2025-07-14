@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Загрузка картинки</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .upload-form { border: 1px solid #ddd; padding: 32px; border-radius: 8px; min-width: 300px; }
+        .upload-form label { display: block; margin-bottom: 8px; }
+        .upload-form input { width: 100%; margin-bottom: 16px; padding: 8px; }
+        .error { color: red; margin-bottom: 16px; }
+    </style>
+</head>
+<body>
+    <form class="upload-form" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <h2>Загрузка картинки</h2>
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+        <label for="id_image">Файл картинки</label>
+        <input type="file" name="image" id="id_image" accept="image/*" required>
+        <button type="submit">Загрузить</button>
+    </form>
+</body>
+</html>

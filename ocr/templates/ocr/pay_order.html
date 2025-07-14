@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Оплата заказа</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .pay-form { border: 1px solid #ddd; padding: 32px; border-radius: 8px; min-width: 300px; }
+        .pay-form div { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <form class="pay-form" method="post">
+        {% csrf_token %}
+        <h2>Оплата заказа</h2>
+        <div>ID заказа: {{ cart.id }}</div>
+        <div>Документ: {{ cart.docs.file_path }}</div>
+        <div>Сумма к оплате: {{ cart.order_price|floatformat:2 }}</div>
+        <button type="submit">Оплатить</button>
+    </form>
+</body>
+</html>

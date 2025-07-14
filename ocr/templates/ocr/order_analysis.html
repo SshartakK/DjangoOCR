@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Заказ анализа</title>
+    <style>
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .order-form { border: 1px solid #ddd; padding: 32px; border-radius: 8px; min-width: 300px; }
+        .order-form img { max-width: 100%; max-height: 200px; margin-bottom: 16px; }
+        .order-form div { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <form class="order-form" method="post">
+        {% csrf_token %}
+        <h2>Заказ анализа</h2>
+        <img src="{{ doc.file_path }}" alt="Документ {{ doc.id }}">
+        <div>ID: {{ doc.id }}</div>
+        <div>Размер: {{ doc.size|floatformat:2 }} Кб</div>
+        <div>Тип файла: {{ file_ext }}</div>
+        <div>Цена за 1 Кб: {{ price_per_kb }}</div>
+        <div><b>Итого: {{ order_price|floatformat:2 }}</b></div>
+        <button type="submit">Заказать анализ</button>
+    </form>
+</body>
+</html>
