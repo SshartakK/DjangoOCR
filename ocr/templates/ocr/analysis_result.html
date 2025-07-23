@@ -4,19 +4,125 @@
     <meta charset="UTF-8">
     <title>Результат анализа</title>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .result { border: 1px solid #ddd; padding: 32px; border-radius: 8px; min-width: 300px; }
-        .result div { margin-bottom: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .result-section {
+            margin-top: 20px;
+        }
+        .result-content {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
-    <div class="result">
-        <h2>Оплата прошла успешно!</h2>
-        <div>ID заказа: {{ cart.id }}</div>
-        <div>Документ: {{ cart.docs.file_path }}</div>
-        <div>Сумма: {{ cart.order_price|floatformat:2 }}</div>
-        <div>Статус: заказ отправлен на анализ (заглушка)</div>
-        <a href="/">На главную</a>
+    <div class="container">
+        <div class="header">
+            <h2>Результат анализа документа</h2>
+            <div>ID заказа: <strong>{{ cart.id }}</strong></div>
+            <div>Документ: <strong>{{ cart.docs.file_path|default:"Не указан" }}</strong></div>
+            <div>Сумма: <strong>{{ cart.order_price|floatformat:2 }} руб.</strong></div>
+            <div>Статус: 
+                <strong>
+                    {% if cart.payment %}
+                        Оплачен
+                    {% else %}
+                        Ожидает оплаты
+                    {% endif %}
+                </strong>
+            </div>
+        </div>
+
+        {% if error %}
+            <div class="error">
+                <strong>Ошибка:</strong> {{ error }}
+            </div>
+        {% endif %}
+
+        <div class="result-section">
+            <h3>Результаты анализа:</h3>
+            
+            {% if analysis_result %}
+                <div class="result-content">
+                    {% if analysis_result.text %}
+                        {{ analysis_result.text }}
+                    {% else %}
+                        {% for key, value in analysis_result.items %}
+                            <div><strong>{{ key|title }}:</strong> {{ value }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% else %}
+                <div class="loading">
+                    {% if not error %}
+                        Результаты анализа загружаются...
+                        <script>
+                            // Автоматическое обновление страницы через 5 секунд, если нет ошибок
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 5000);
+                        </script>
+                    {% else %}
+                        Не удалось загрузить результаты анализа.
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="actions">
+            <a href="{% url 'index' %}" class="btn">На главную</a>
+            <a href="{% url 'analysis_result' cart.id %}" class="btn">Обновить</a>
+        </div>
     </div>
 </body>
 </html>
